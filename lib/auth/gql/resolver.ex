@@ -22,7 +22,9 @@ defmodule Auth.Resolver do
       else
         case Ext.GQL.Resolvers.Base.create(schema, repo, params[:form]).(args, info) do
           {:ok, user} ->
-            device = Auth.GetOrCreateUserDevice.call(params, user.id, nil, context[:device_data])
+            device_data = Map.merge(context[:device_data], Map.take(args.entity, [:ga_cid]))
+            device = Auth.GetOrCreateUserDevice.call(params, user.id, nil, device_data)
+
             {:ok, Auth.GenerateJWTData.call(user, repo, device)}
 
           error ->
@@ -84,7 +86,9 @@ defmodule Auth.Resolver do
     fn args, %{context: context} ->
       case Auth.Providers.Authorize.call(args, params) do
         {:ok, user} ->
-          device = Auth.GetOrCreateUserDevice.call(params, user.id, args[:device_uuid], context[:device_data])
+          device_data = Map.merge(context[:device_data], Map.take(args.extra_params, [:ga_cid]))
+          device = Auth.GetOrCreateUserDevice.call(params, user.id, args[:device_uuid], device_data)
+
           {:ok, Auth.GenerateJWTData.call(user, repo, device)}
 
         {:error, data} ->
