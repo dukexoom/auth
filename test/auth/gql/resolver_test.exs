@@ -114,9 +114,17 @@ defmodule Auth.ResolverTest do
       }
     }
 
-    fb_args_with_email = %{payload: %{access_token: "with_email", user_id: "fb_user_id"}, provider: :facebook}
+    fb_args_with_email = %{
+      extra_params: %{},
+      payload: %{access_token: "with_email", user_id: "fb_user_id"},
+      provider: :facebook
+    }
 
-    fb_args_without_email = %{payload: %{access_token: "without_email", user_id: "fb_user_id"}, provider: :facebook}
+    fb_args_without_email = %{
+      extra_params: %{},
+      payload: %{access_token: "without_email", user_id: "fb_user_id"},
+      provider: :facebook
+    }
 
     {:ok,
      google_args: google_args,
